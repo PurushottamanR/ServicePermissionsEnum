@@ -7,14 +7,11 @@ using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.Security.Principal;
 using System.Security.AccessControl;
-using System.Runtime.InteropServices;
 
 namespace ServiceEnum
 {
     class Program
     {
-        [DllImport("advapi32.dll", SetLastError = true)]
-        static extern bool QueryServiceObjectSecurity(SafeHandle serviceHandle, System.Security.AccessControl.SecurityInfos secInfo, byte[] lpSecDesrBuf, uint bufSize, out uint bufSizeNeeded);
         public enum ServiceAccessFlags : uint
         {
             QueryConfig = 1,
@@ -36,6 +33,136 @@ namespace ServiceEnum
             GenericExecute = 536870912,
             GenericWrite = 1073741824,
             GenericRead = 2147483648
+        }
+
+        static void helpMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine("ServiceEnum.exe [getservice | getserviceACL] [<name-of-service>]");
+            Console.WriteLine();
+        }
+
+        static string maskToPermissions(uint accessmasks)
+        {
+            string permissions = "";
+            foreach (uint i in Enum.GetValues(typeof(ServiceAccessFlags)))
+            {
+                if(Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+
+                if (Convert.ToBoolean(i & accessmasks))
+                {
+                    permissions = permissions + Enum.GetName(typeof(ServiceAccessFlags), i) + " | ";
+                    continue;
+                }
+            }
+
+            return permissions;
         }
         static void GetServices()
         {
@@ -73,16 +200,43 @@ namespace ServiceEnum
                 string accountname = sid.Translate(typeof(NTAccount)).ToString();
                 Console.WriteLine("Access type: {0}", ((CommonAce)rsd.DiscretionaryAcl[i]).AceType);
                 Console.WriteLine("Identity: {0}", accountname);
-                Console.WriteLine("Access Mask: {0}", (ServiceAccessFlags)((CommonAce)rsd.DiscretionaryAcl[i]).AccessMask);
+                uint accessmask = (uint)((CommonAce)rsd.DiscretionaryAcl[i]).AccessMask;
+                string permissions = maskToPermissions(accessmask);
+                Console.WriteLine("Permissions: {0}", permissions);
                 Console.WriteLine();
             }
         }
         static void Main(string[] args)
         {
+            if (args.Length > 0)
+            {
+                string cmd = args[0];
+                if (cmd == "getservice")
+                {
+                    GetServices();
+                }
+                else if (cmd == "getserviceACL")
+                {
+                    if (args.Length == 2)
+                    {
+                        string servicename = args[1];
+                        GetServiceAcl(servicename);
+                    }
 
-            //GetServices();
-            GetServiceAcl("bits");
-
+                    else
+                    {
+                        helpMenu();
+                    }
+                }
+                else
+                {
+                    helpMenu();
+                }
+            }
+            else
+            {
+                helpMenu();
+            }
         }
     }
 }
